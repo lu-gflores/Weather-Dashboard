@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <title>Weather Dashboard</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
@@ -13,21 +13,33 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-light bg-dark text-center">
+        <span class="navbar-brand text-center mb-0 h1 text-light ">Weather Dashboard</span>
+    </nav>
+
 
     <div class="container-fluid">
-        <nav class="navbar navbar-light bg-dark text-center">
-            <span class="navbar-brand mb-0 h1 text-light">Weather DashBoard</span>
-        </nav>
-        <br>
-        <form class="form-inline">
-            <input type="search" class="form-control mr-ms-2" placeholder="search" aria-label="Search">
-            <button class="btn btn-primary my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
-        </form>
+        <div class="row">
 
+            <div class="form-inline col-md-4">
+                <input type="search" id="search-input" class="form-control mr-ms-2" placeholder="search"
+                    aria-label="Search">
+                <button class="btn btn-primary my-2 my-sm-0 search-btn" type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="card col-md-8">
+                <div class="card-body" id="dailyforecast"></div>
+            </div>
 
-
-
-        
+        </div>
+            <div class="row">
+                <div class="card col-md-3">
+                    <div class="card-body" id="history"></div>
+                    
+                </div>
+            </div>
+           
+        </div>
     </div>
 
 
