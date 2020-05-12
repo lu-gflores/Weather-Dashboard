@@ -26,7 +26,7 @@ searchBtn.on("click", function(event) {
     currentForecast(searchInput);
     clearAll();
 });
-
+//current weather function
 function currentForecast (cityName) {
     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + apiKey;
     $.ajax( {
@@ -41,10 +41,15 @@ function currentForecast (cityName) {
 
     var title = $('<h2>').addClass('card-title').text(response.name); //city name
     currCard.append(title);
+    
+    var icon = "http://openweathermap.org/img/wn/"+ response.weather[0].icon + "@2x.png"; //grabbing url for image so that it displays in card
+    var imageIcon = $("<div>").addClass("col-md-5").append($("<img>").attr("src", icon));
+    currCard.append(imageIcon)
+
 
     var convertTemp = (response.main.temp - 273.15) * 1.8 + 32;//convert to F
     //creating and appending temp, humidity, and wind speed respectively
-    var temperatureText = $('<p>').addClass('card-text current-temp').text("Temperature: " + convertTemp );
+    var temperatureText = $('<p>').addClass('card-text current-temp').html("Temperature: " + convertTemp.toFixed(2) + "&#730F");
     currCard.append(temperatureText);
 
     var humidityText =$('<p>').addClass('card-text current-hum').text("Humidity: " + response.main.humidity + "%");
