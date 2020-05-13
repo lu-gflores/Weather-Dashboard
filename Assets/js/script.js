@@ -20,9 +20,11 @@ searchBtn.on("click", function (event) {
    
     localStorage.setItem("searches", JSON.stringify(searchHistory));
     $("#search-input").val("");
+
     renderSearchHistory();
     currentForecast(searchInput);
     weeklyForecast(searchInput);
+
     clearAll();
 });
 //current weather function
@@ -34,12 +36,12 @@ function currentForecast(cityName) {
         method: "GET"
     }).then(function (response) {
 
-        var currCard = $("#dailyforecast")//card body for current daily forecast
-
+        var currCard = $("<div>").addClass("card")//card body for current daily forecast
+        $("#dailyforecast").append(currCard);
         var row = $('<div>').addClass('row no-gutters');
         currCard.append(row);
 
-        var title = $('<h2>').addClass('card-title').text(response.name); //city name
+        var title = $('<h2>').addClass('card-title city').text(response.name); //city name
         currCard.append(title);
 
         var icon = "http://openweathermap.org/img/wn/" + response.weather[0].icon + "@2x.png"; //grabbing url for image so that it displays in card
@@ -48,13 +50,13 @@ function currentForecast(cityName) {
 
         var convertTemp = (response.main.temp - 273.15) * 1.8 + 32;//convert to F
         //creating and appending temp, humidity, and wind speed respectively
-        var temperatureText = $('<p>').addClass('card-text current-temp').html("Temperature: " + convertTemp.toFixed(2) + "&#730F");
+        var temperatureText = $('<p>').addClass('card-text current-temp city').html("Temperature: " + convertTemp.toFixed(2) + "&#730F");
         currCard.append(temperatureText);
 
-        var humidityText = $('<p>').addClass('card-text current-hum').text("Humidity: " + response.main.humidity + "%");
+        var humidityText = $('<p>').addClass('card-text current-hum city').text("Humidity: " + response.main.humidity + "%");
         currCard.append(humidityText);
 
-        var windText = $('<p>').addClass('card-text current-wind').text("Wind Speed: " + response.wind.speed + "MPH");
+        var windText = $('<p>').addClass('card-text current-wind city').text("Wind Speed: " + response.wind.speed + "MPH");
         currCard.append(windText);
 
         //UV api format
@@ -84,25 +86,37 @@ function currentForecast(cityName) {
     });
 }
 
-//five cards for days
+//five day forecast
 function weeklyForecast(cityName) {
     var queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + apiKey;
     $.ajax({
         url: queryURL,
         method: "GET"
     }).then(function (response) {
+
         console.log(response)
-        var divRow = $("#five-day").addClass("fiveday");
-        var dayCard = $("<div>").addClass("card col-md-3");
-        var dayBody = $("<div>").addClass("card-body");
-        divRow.append(dayCard, dayBody);
+        //creating new row for cards
+        var divRow = $("<div>").addClass("week-forecast");
+        $("#five-day").append(divRow);
 
-        for (var i = 0; i < response.list.length; i++) {
-            if (response.list[i].dt_text.indexOf("15:00:00") !==-1) {
-            var dateTitle = $('<h2>').addClass('card-title').text(response.list[i].dt);
-            dayCard.append(dateTitle);
+        for (var i = 0; i < response.list.length; i++) { //creating cards through loop for 5 day
+            
+            var day = $("<div>").addClass("weekDay");//hold specific date
+            divRow.append(day);
+            
+            var dayCard = $("<div>").addClass("card bg-primary");//new card
+            day.append(dayCard);
 
-            }
+            var cardtitle = $("<h3>").addClass("card-title").text(response.list[i].dt_text);
+            divRow.append(cardtitle);
+
+            var dayBody = $("<div>").addClass("card-body");
+            divRow.append(dayBody);
+
+            dayBody.append("<p>").addClass("card-text city").text("Temperature: " + response.list[i].main.temp);
+            dayBody.append("<p>").addClass("card-text city").text("Humidity: " + response.list[i].main.humidity);
+
+            
         }
     });
 }
@@ -112,7 +126,6 @@ function weeklyForecast(cityName) {
 
 function clearAll() {
     $("#dailyforecast").empty();
-
 
 }
 
