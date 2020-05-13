@@ -17,7 +17,7 @@ searchBtn.on("click", function (event) {
 
     var searchInput = $('#search-input').val().trim(); //user input city
     searchHistory.push(searchInput);
-   
+
     localStorage.setItem("searches", JSON.stringify(searchHistory));
     $("#search-input").val("");
 
@@ -38,10 +38,10 @@ function currentForecast(cityName) {
 
         var currCard = $("<div>").addClass("card")//card body for current daily forecast
         $("#dailyforecast").append(currCard);
-        var row = $('<div>').addClass('row no-gutters');
-        currCard.append(row);
+        // var row = $('<div>').addClass('row no-gutters');
+        // currCard.append(row);
 
-        var title = $('<h2>').addClass('card-title city').text(response.name); //city name
+        var title = $('<h2>').addClass('card-title').text(response.name); //city name
         currCard.append(title);
 
         var icon = "http://openweathermap.org/img/wn/" + response.weather[0].icon + "@2x.png"; //grabbing url for image so that it displays in card
@@ -50,13 +50,13 @@ function currentForecast(cityName) {
 
         var convertTemp = (response.main.temp - 273.15) * 1.8 + 32;//convert to F
         //creating and appending temp, humidity, and wind speed respectively
-        var temperatureText = $('<p>').addClass('card-text current-temp city').html("Temperature: " + convertTemp.toFixed(2) + "&#730F");
+        var temperatureText = $('<p>').addClass('card-text current-temp').html("Temperature: " + convertTemp.toFixed(2) + "&#730F");
         currCard.append(temperatureText);
 
-        var humidityText = $('<p>').addClass('card-text current-hum city').text("Humidity: " + response.main.humidity + "%");
+        var humidityText = $('<p>').addClass('card-text current-hum').text("Humidity: " + response.main.humidity + "%");
         currCard.append(humidityText);
 
-        var windText = $('<p>').addClass('card-text current-wind city').text("Wind Speed: " + response.wind.speed + "MPH");
+        var windText = $('<p>').addClass('card-text current-wind').text("Wind Speed: " + response.wind.speed + "MPH");
         currCard.append(windText);
 
         //UV api format
@@ -93,42 +93,46 @@ function weeklyForecast(cityName) {
         url: queryURL,
         method: "GET"
     }).then(function (response) {
-
         console.log(response)
-        //creating new row for cards
-        var divRow = $("<div>").addClass("week-forecast");
-        $("#five-day").append(divRow);
+            //new row for cards
+            var divRow = $("<div>").addClass("row");
+            $("#dailyforecast").append(divRow);
 
-        for (var i = 0; i < response.list.length; i++) { //creating cards through loop for 5 day
+        //creating cards through loop for 5 day
+        for (var i = 0; i < 5; i++) {
             
-            var day = $("<div>").addClass("weekDay");//hold specific date
-            divRow.append(day);
-            
-            var dayCard = $("<div>").addClass("card bg-primary");//new card
-            day.append(dayCard);
 
-            var cardtitle = $("<h3>").addClass("card-title").text(response.list[i].dt_text);
-            divRow.append(cardtitle);
+            //creating cards for the 5 days
+            var dayCard = $("<div>").addClass("card col-2");
+            var cardBody = $("<div>").addClass("card-body")
 
-            var dayBody = $("<div>").addClass("card-body");
-            divRow.append(dayBody);
+            divRow.append(dayCard);
 
-            dayBody.append("<p>").addClass("card-text city").text("Temperature: " + response.list[i].main.temp);
-            dayBody.append("<p>").addClass("card-text city").text("Humidity: " + response.list[i].main.humidity);
+            dayCard.append(cardBody)
+            //creating variables to store date, temp, icon, and humidity and appending them to cards
+            var forecastDate = $("<h4>").addClass("card-header city").text(response.list[i].dt_txt.slice(0, 10)); //take the first 10 characters from dt_txt
+            cardBody.append(forecastDate);
 
-            
+            var iconURL = "http://openweathermap.org/img/wn/" + response.list[i].weather[0].icon + "@2x.png";
+            var imageIcon = $("<div>").append($("<img>").attr("src", iconURL));
+            cardBody.append(imageIcon);
+
+            var convertTemp = (response.list[i].main.temp - 273.15) * 1.8 + 32
+            var forecastTemp = $("<p>").addClass("card-text").html("Temp: " + convertTemp.toFixed(2) + "&#730F");
+            cardBody.append(forecastTemp);
+
+            var forecastHum = $("<p>").addClass("card-text").text("Humidity: " + response.list[i].main.humidity);
+            cardBody.append(forecastHum);
+
+            // $("#dailyforecast").append(dayCard); //append cards to dailyforecast so it appears below current forecast
+
         }
     });
 }
 
-
-
-
+//clear div after clicking new search
 function clearAll() {
     $("#dailyforecast").empty();
-
 }
 
-$(document).on("click", ".city", function () {
-    console.log($(this).text());
-});
+$(document).on("click", ".city", currentForecast, weeklyForecast);
