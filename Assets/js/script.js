@@ -1,4 +1,3 @@
-
 var searchBtn = $('#search-btn');
 var searchHistory = JSON.parse(localStorage.getItem("searches")) || [];
 var apiKey = "&appid=0888bb26c1d027c60cb2417244156801";
@@ -11,10 +10,12 @@ function renderSearchHistory() {
         $("#search-history").append($("<p class = 'city'>").text(searchHistory[i]));
     }
 }
+
+
 //search button listener event
 searchBtn.on("click", function (event) {
     event.preventDefault();
-
+    var loadLastSearch;
     var searchInput = $('#search-input').val().trim(); //user input city
     searchHistory.push(searchInput);
 
@@ -81,8 +82,8 @@ function currentForecast(cityName) {
                 changeColor = "red"
             }
             //need to append this properly
-            var uvItem = $("<p>").addClass("card-text current-uv").text("UV Index: ")
-            uvItem.append($("<span>").css("background-color:" + changeColor)).text(index);
+            var uvItem = $("<p>").addClass("card-text current-uv").text("UV Index: ").append($("<span>").css("background-color:" + changeColor)).text(index);
+         
             currCard.append(uvItem);
         });
     });
@@ -129,12 +130,13 @@ function weeklyForecast(cityName) {
         }
     });
 }
-//clear div after clicking searchBtn
+//clear div after clicking searchBtn or clicking an item from search history 
 function clearAll() {
     $("#dailyforecast").empty();
 }
 
 $(document).on("click", ".city", function () {
+    clearAll();
     thisCity = $(this).text();
     currentForecast(thisCity);
     weeklyForecast(thisCity);
